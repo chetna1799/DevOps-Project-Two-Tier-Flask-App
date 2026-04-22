@@ -1,22 +1,22 @@
-pipeline {
+pipeline{
     agent any
-
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Building..'
+    stages{
+        stage('Clone repo'){
+            steps{
+                git branch: 'main', url: 'https://github.com/prashantgohel321/DevOps-Project-Two-Tier-Flask-App.git'
             }
         }
-        
-        stage('Test') {
-            steps {
-                echo 'Testing..'
+        stage('Build image'){
+            steps{
+                sh 'docker build -t flask-app .'
             }
         }
-        
-        stage('Deploy') {
-            steps {
-                echo 'Deploying..'
+        stage('Deploy with docker compose'){
+            steps{
+                // existing container if they are running
+                sh 'docker compose down || true'
+                // start app, rebuilding flask image
+                sh 'docker compose up -d --build'
             }
         }
     }
